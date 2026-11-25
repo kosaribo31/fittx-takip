@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fittx Takip">
+<meta name="theme-color" content="#0B0F14">
+<title>Fittx Takip</title>
+<style>
+  :root {
+    --bg: #0B0F14;
+    --card: #141B23;
+    --card2: #1B2430;
+    --border: #263242;
+    --green: #22C55E;
+    --green-soft: rgba(34, 197, 94, 0.14);
+    --blue: #38BDF8;
+    --blue-soft: rgba(56, 189, 248, 0.14);
+    --text: #F1F5F9;
+    --muted: #94A3B8;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+    --red-yt: #E11D48;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overscroll-behavior-y: none;
+  }
+  body {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(11, 15, 20, 0.96);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: calc(12px + env(safe-area-inset-top)) 14px 10px;
+  }
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.4px;
+  }
+  .brand span { color: var(--green); }
+  .timer-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 7px 10px;
+  }
+  .timer-display {
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--green);
+    min-width: 52px;
+  }
+  .timer-btn {
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .timer-btn.stop { margin-left: auto; color: var(--muted); }
+
+  main { padding: 14px; max-width: 680px; margin: 0 auto; }
+
+  .install-banner {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(56, 189, 248, 0.12));
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    border-radius: 13px;
+    padding: 11px 12px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .install-banner strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 13px; }
+  .install-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 700;
+    padding: 2px 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+  .day-title { font-size: 20px; font-weight: 800; margin: 0; }
+  .day-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .ex-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 13px;
+    margin-bottom: 12px;
+  }
+  .ex-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .ex-name { font-size: 16px; font-weight: 700; margin: 0; }
+  .ex-muscle { font-size: 12px; color: var(--green); margin-top: 2px; font-weight: 600; }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--card2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .badge.pr { color: var(--warn); border-color: rgba(245, 158, 11, 0.35); }
+  .badge.last { color: #93C5FD; border-color: rgba(147, 197, 253, 0.3); }
+
+  .guide-toggle {
+    margin-top: 10px;
+    width: 100%;
+    text-align: left;
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .guide-box {
+    display: none;
+    margin-top: 8px;
+    background: #0F151C;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .guide-box.open { display: block; }
+  .guide-item { margin-bottom: 8px; }
+  .guide-item strong { color: var(--green); }
+  .video-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .btn-yt {
+    flex: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    background: var(--red-yt);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-link-edit {
+    background: var(--card2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 10px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .sets-wrap { margin-top: 11px; }
+  .set-head {
+    display: grid;
+    grid-template-columns: 44px 1fr 1fr 44px;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    padding: 0 2px;
+  }
+  .set-row {
+    display: grid;
+    grid-template-columns: 44px 1fr 1fr 44px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .set-num {
+    background: var(--card2);
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .set-input {
+    width: 100%;
+    background: #0D131A;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .set-input:focus { border-color: var(--green); }
+  .check-btn {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--muted);
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .check-btn.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: #052E16;
+  }
+  .set-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .mini-btn {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .note-input {
+    width: 100%;
+    margin-top: 8px;
+    background: #0D131A;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 16px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .note-input:focus { border-color: var(--green); }
+
+  .save-workout-btn {
+    width: 100%;
+    background: var(--green);
+    color: #052E16;
+    border: none;
+    border-radius: 13px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+
+  /* Su Sekmesi */
+  .water-big {
+    text-align: center;
+    padding: 14px 10px 8px;
+  }
+  .water-ml {
+    font-size: 34px;
+    font-weight: 900;
+    color: var(--blue);
+  }
+  .water-goal {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .progress-track {
+    width: 100%;
+    height: 14px;
+    background: #0D131A;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 14px 0 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0284C7, #38BDF8);
+    transition: width 0.25s ease;
+  }
+  .water-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .water-add-btn {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 10px;
+    padding: 11px 6px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .water-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .water-row:last-child { border-bottom: none; }
+  .water-select {
+    background: #0D131A;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .toggle-pill {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .toggle-pill.on {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #082F49;
+  }
+  .water-save-btn {
+    width: 100%;
+    background: var(--blue);
+    color: #082F49;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .info-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin-top: 8px;
+  }
+
+  .history-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .history-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  .history-line {
+    font-size: 13px;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+  .history-line span { color: var(--muted); }
+  .del-btn {
+    background: rgba(239, 68, 68, 0.14);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 7px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .backup-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .backup-btn {
+    flex: 1;
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(11, 15, 20, 0.98);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 6px 4px calc(10px + env(safe-area-inset-bottom));
+    z-index: 60;
+  }
+  .nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 6px 2px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .nav-btn .ico { font-size: 18px; }
+  .nav-btn.active {
+    color: var(--green);
+    background: var(--green-soft);
+  }
+  .nav-btn.active.water-nav {
+    color: var(--blue);
+    background: var(--blue-soft);
+  }
+  .toast {
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: #052E16;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<header>
+  <div class="top-row">
+    <div class="brand">FITTX <span>TAKİP</span></div>
+    <div style="font-size:12px;color:var(--muted);" id="todayDate"></div>
+  </div>
+  <div class="timer-bar">
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="startTimer(60)">60 sn</button>
+    <button class="timer-btn" onclick="startTimer(90)">90 sn</button>
+    <button class="timer-btn" onclick="startTimer(120)">120 sn</button>
+    <button class="timer-btn stop" onclick="stopTimer()">Sıfırla</button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav>
+  <button class="nav-btn active" id="nav-0" onclick="switchTab(0)">
+    <span class="ico">💪</span><span>1. Gün</span>
+  </button>
+  <button class="nav-btn" id="nav-1" onclick="switchTab(1)">
+    <span class="ico">🏋️</span><span>2. Gün</span>
+  </button>
+  <button class="nav-btn" id="nav-2" onclick="switchTab(2)">
+    <span class="ico">🦵</span><span>3. Gün</span>
+  </button>
+  <button class="nav-btn water-nav" id="nav-3" onclick="switchTab(3)">
+    <span class="ico">💧</span><span>Su</span>
+  </button>
+  <button class="nav-btn" id="nav-4" onclick="switchTab(4)">
+    <span class="ico">📊</span><span>Geçmiş</span>
+  </button>
+</nav>
+
+<script>
+/* Tek dosyada iOS/Android uygulama ikonu ve PWA manifest üretimi */
+(function initPwaAssets() {
+  try {
+    const c = document.createElement("canvas");
+    c.width = 180;
+    c.height = 180;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#0B0F14";
+    ctx.fillRect(0, 0, 180, 180);
+
+    ctx.strokeStyle = "#22C55E";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.roundRect(14, 14, 152, 152, 34);
+    ctx.stroke();
+
+    ctx.fillStyle = "#22C55E";
+    ctx.font = "900 72px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("FX", 90, 82);
+
+    ctx.fillStyle = "#F1F5F9";
+    ctx.font = "700 22px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.fillText("FITTX", 90, 134);
+
+    const pngUrl = c.toDataURL("image/png");
+
+    const appleIcon = document.createElement("link");
+    appleIcon.rel = "apple-touch-icon";
+    appleIcon.sizes = "180x180";
+    appleIcon.href = pngUrl;
+    document.head.appendChild(appleIcon);
+
+    const favIcon = document.createElement("link");
+    favIcon.rel = "icon";
+    favIcon.type = "image/png";
+    favIcon.href = pngUrl;
+    document.head.appendChild(favIcon);
+
+    const manifestObj = {
+      name: "Fittx Antrenman Takip",
+      short_name: "Fittx Takip",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#0B0F14",
+      theme_color: "#0B0F14",
+      icons: [{ src: pngUrl, sizes: "180x180", type: "image/png" }]
+    };
+    const manifestLink = document.createElement("link");
+    manifestLink.rel = "manifest";
+    manifestLink.href = "data:application/manifest+json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifestObj));
+    document.head.appendChild(manifestLink);
+  } catch (e) {}
+})();
+
+const PROGRAM = [
+  {
+    id: "day1",
+    title: "1. Gün — Sırt & Ön Kol",
+    sub: "6 Hareket · Hedef: 8–12 tekrar, kontrollü çekiş",
+    exercises: [
+      {
+        id: "lat_pulldown",
+        name: "Lat Pulldown",
+        muscle: "Kanat / Üst Sırt",
+        defaultSets: 2,
+        machine: "Üstten kablolu, geniş demir barlı ve diz sabitleme süngerli çekiş makinesi.",
+        form: "Dizlerini süngerin altına sıkıca kilitle. Barı omuz genişliğinden biraz açık tut, göğsünü hafif dışarı çıkar ve barı üst göğsüne doğru çek. Dirseklerini aşağı-geriye çekmeye odaklan, ağırlığı yavaşça yukarı sal.",
+        breath: "Barı aşağı çekerken nefes ver, yukarı bırakırken nefes al.",
+        query: "Lat Pulldown nasıl yapılır"
+      },
+      {
+        id: "close_grip_row",
+        name: "Close Grip Row",
+        muscle: "Orta Sırt",
+        defaultSets: 2,
+        machine: "Oturarak karşıdan çekilen kablolu row makinesi (dar V-bar tutamaç) veya dar tutuşlu sırt makinesi.",
+        form: "Belini dik tut, öne-arkaya sallanma. Tutamacı karnına/alt göğsüne doğru çek, kürek kemiklerini arkada 1 saniye sıkıştırıp kontrollü ileri bırak.",
+        breath: "Kendine çekerken nefes ver, ileri salarken nefes al.",
+        query: "Seated Cable Row dar tutuş nasıl yapılır"
+      },
+      {
+        id: "wide_grip_row",
+        name: "Wide Grip Row",
+        muscle: "Üst Sırt & Arka Omuz",
+        defaultSets: 2,
+        machine: "Göğüs destekli veya oturarak çekilen sırt makinesinin geniş tutamaçlı (veya uzun barlı) ayarı.",
+        form: "Göğsünü mindere yasla (veya dik otur). Tutamaçları genişten kavra, dirsekleri hafif yanlara açarak göğüs hizasına doğru çek; omuzları kulaklara doğru kaldırma.",
+        breath: "Çekerken nefes ver, bırakırken nefes al.",
+        query: "Wide Grip Seated Row nasıl yapılır"
+      },
+      {
+        id: "shrugs",
+        name: "Shrugs",
+        muscle: "Trapez (Boyun / Üst Sırt)",
+        defaultSets: 2,
+        machine: "İki elde ağır dambıl veya uzun halter (barbell) ile ayakta yapılır.",
+        form: "Kollar gövdenin yanında tamamen serbest ve düz. Sadece omuzlarını kulaklarına doğru dikey olarak yukarı kaldır, tepede 1 saniye bekle ve yavaşça indir. Omuzlarını daire çizerek döndürme.",
+        breath: "Omuzları yukarı kaldırırken nefes ver, indirirken nefes al.",
+        query: "Dumbbell Shrugs nasıl yapılır"
+      },
+      {
+        id: "machine_curl",
+        name: "Machine Curl",
+        muscle: "Ön Kol (Biceps)",
+        defaultSets: 2,
+        machine: "Dirseklerin eğimli bir mindere yaslandığı oturmalı biceps (Preacher Curl) makinesi.",
+        form: "Koltuk boyunu koltuk altların minderin üst kenarına tam oturacak şekilde ayarla. Dirsekleri minderden kaldırmadan ağırlığı yukarı bük. İndirirken dirseği en altta tamamen kilitleme.",
+        breath: "Yukarı kaldırırken nefes ver, aşağı indirirken nefes al.",
+        query: "Preacher Curl Machine nasıl yapılır"
+      },
+      {
+        id: "hammer_curl",
+        name: "Hammer Curl",
+        muscle: "Ön Kol (Biceps & Brachialis)",
+        defaultSets: 2,
+        machine: "Serbest ağırlık alanında iki dambıl ile ayakta veya oturarak yapılır.",
+        form: "Dambılları çekiç tutar gibi avuç içleri birbirine bakacak şekilde kavra. Dirsekleri gövdene sabit tutarak omuz hizasına kaldır ve kontrollü indir; belden savurma.",
+        breath: "Yukarı kaldırırken nefes ver, indirirken nefes al.",
+        query: "Hammer Curl nasıl yapılır"
+      }
+    ]
+  },
+  {
+    id: "day2",
+    title: "2. Gün — Göğüs, Omuz & Arka Kol",
+    sub: "7 Hareket · Hedef: 8–12 tekrar, eklemleri kilitlemeden",
+    exercises: [
+      {
+        id: "incline_press",
+        name: "Incline Press",
+        muscle: "Üst Göğüs",
+        defaultSets: 2,
+        machine: "Multi Press makinesinin EĞİMLİ (Incline) sırtlık ayarı veya eğimli sehpa + dambıl.",
+        form: "Sırtlığı eğimli konuma al, tutamaçlar üst göğüs hizanda olsun. Kürek kemiklerini mindere yaslayıp yukarı-öne doğru it; en tepede dirseklerini tam kilitleme.",
+        breath: "İterken nefes ver, yavaşça indirirken nefes al.",
+        query: "Incline Chest Press Machine nasıl yapılır"
+      },
+      {
+        id: "chest_press",
+        name: "Chest Press",
+        muscle: "Orta Göğüs",
+        defaultSets: 2,
+        machine: "Multi Press makinesinin DÜZ / YATAY (Flat) ayarı veya oturmalı Chest Press makinesi.",
+        form: "Sırtlığı yatay konuma getir, tutamaçlar tam orta göğüs hizanda olsun. Dirseklerin omuz hizandan yukarı kaçmasın (hafif aşağı açılı). Kontrollü it ve indir; dirsekleri kilitleme.",
+        breath: "İterken nefes ver, geri indirirken nefes al.",
+        query: "Chest Press Machine nasıl yapılır"
+      },
+      {
+        id: "pec_fly",
+        name: "Pec Fly (Kelebek)",
+        muscle: "Göğüs (İzole)",
+        defaultSets: 2,
+        machine: "Sırtını mindere yaslayıp iki yandaki kolları önde birleştirdiğin Kelebek makinesi.",
+        form: "Koltuk boyunu tutamaçlar göğüs hizanda olacak şekilde ayarla. Kocaman bir ağaca sarılır gibi dirsekler hafif kırık sabit kalsın, kolları önde birleştir. Geri açarken omuz hizandan fazla arkaya kaçma.",
+        breath: "Kolları önde birleştirirken nefes ver, açarken nefes al.",
+        query: "Pec Fly kelebek nasıl yapılır"
+      },
+      {
+        id: "shoulder_press",
+        name: "Shoulder Press",
+        muscle: "Ön & Yan Omuz",
+        defaultSets: 2,
+        machine: "Multi Press makinesinin TAM DİK (Upright) ayarı veya oturmalı dambıl press.",
+        form: "Sırtlığı tam dik konuma getir, tutamaçlar omuz/kulak hizanda olsun. Başını ve sırtını mindere yasla, yukarı doğru it. En üstte dirsekleri tamamen kilitlemeden kontrollü indir.",
+        breath: "Yukarı iterken nefes ver, indirirken nefes al.",
+        query: "Machine Shoulder Press nasıl yapılır"
+      },
+      {
+        id: "lateral_raises",
+        name: "Lateral Raises",
+        muscle: "Yan Omuz",
+        defaultSets: 2,
+        machine: "İki hafif/orta dambıl ile ayakta yapılır.",
+        form: "Dirseklerin çok hafif kırık olsun. Dambılları yanlara doğru tam omuz hizasına kadar kaldır (omuzdan yukarı çıkma), kısa bir an tutup yavaşça indir. Gövdeni sallama.",
+        breath: "Yanlara kaldırırken nefes ver, indirirken nefes al.",
+        query: "Dumbbell Lateral Raise nasıl yapılır"
+      },
+      {
+        id: "overhead_pushdown",
+        name: "Overhead Pushdown",
+        muscle: "Arka Kol (Triceps Uzun Baş)",
+        defaultSets: 2,
+        machine: "Kablo istasyonu + halat (rope) aparatı.",
+        form: "Makineye sırtını dön, halatı başının arkasından kavra, hafif öne eğil. Dirseklerini başının yanında sabit tutup kolları öne/yukarı düzelt. Dirseklerin dışa açılmasın.",
+        breath: "Kolları ileri uzatırken nefes ver, geri bükerken nefes al.",
+        query: "Cable Overhead Triceps Extension nasıl yapılır"
+      },
+      {
+        id: "reverse_pushdown",
+        name: "Reverse Pushdown",
+        muscle: "Arka Kol (Triceps)",
+        defaultSets: 2,
+        machine: "Kablo istasyonu (üst makara) + düz veya Z-bar aparatı.",
+        form: "Barı avuç içlerin yukarı bakacak şekilde (ters tutuş) kavra. Dirseklerini gövdenin iki yanına yapıştır ve oynatmadan barı aşağı doğru bastır, yavaşça göğüs hizasına bırak.",
+        breath: "Aşağı bastırırken nefes ver, yukarı bırakırken nefes al.",
+        query: "Reverse Grip Triceps Pushdown nasıl yapılır"
+      }
+    ]
+  },
+  {
+    id: "day3",
+    title: "3. Gün — Bacak & Karın",
+    sub: "8 Hareket · Bacak: 8–12 · Calf & Karın: 15–20 tekrar",
+    exercises: [
+      {
+        id: "squat",
+        name: "Squat",
+        muscle: "Ön Bacak & Kalça",
+        defaultSets: 2,
+        machine: "Squat Rack (serbest bar), Smith Machine veya başlangıçta vücut ağırlığı / elde dambıl.",
+        form: "Ayaklar omuz genişliğinde, parmak uçları hafif dışa dönük. Göğüs dik, kalçayı geriye vererek görünmez bir sandalyeye oturur gibi in. Dizlerin içe çökmesin, kalkarken en üstte dizleri kilitleme.",
+        breath: "Yukarıda nefes alıp karnı sık, o destekle in; kalkışta zor noktayı geçerken nefes ver.",
+        query: "Squat nasıl yapılır"
+      },
+      {
+        id: "leg_press",
+        name: "Leg Press",
+        muscle: "Ön Bacak & Kalça",
+        defaultSets: 2,
+        machine: "Yatarak/oturarak ayaklarla geniş metal plakayı ittiğin 45 derecelik bacak itiş makinesi.",
+        form: "Belin ve kalçan koltuktan hiç kalkmasın. Ayakları plakanın ortasına omuz genişliğinde koy. Kontrollü indir, iterken dizlerini ASLA tam düz kilitleme (çok hafif kırık bırak).",
+        breath: "Plakayı iterken nefes ver, kendine indirirken nefes al.",
+        query: "Leg Press nasıl yapılır"
+      },
+      {
+        id: "leg_curl",
+        name: "Leg Curl",
+        muscle: "Arka Bacak (Hamstring)",
+        defaultSets: 2,
+        machine: "2'si 1 arada Leg Extension / Seated Leg Curl (oturmalı) makinesi veya yüzüstü bacak bükme makinesi.",
+        form: "Oturmalı makinede alttaki silindiri yukarı al, ayak bileklerini üstüne koy, üst silindiri uyluğuna kilitle ve topuklarını koltuğun altına doğru çek. 1 saniye sıkıp ağırlığı plakaya çarptırmadan kontrollü bırak.",
+        breath: "Bacakları bükerken nefes ver, uzatırken nefes al.",
+        query: "Seated Leg Curl nasıl yapılır"
+      },
+      {
+        id: "leg_extension",
+        name: "Leg Extension",
+        muscle: "Ön Bacak (Quadriceps)",
+        defaultSets: 2,
+        machine: "Oturarak ayak bileğindeki süngeri öne/yukarı kaldırdığın ön bacak makinesi (2'si 1 arada makinede üst silindir boşa alınır).",
+        form: "Sırtlık ayarını diz eklemin tam koltuğun bitim hizasına gelecek şekilde yap. Yan kolları sıkı tut, bacaklarını yukarı kaldırıp ön bacağı sık; dizleri tam kilitlemeden yavaşça indir.",
+        breath: "Yukarı kaldırırken nefes ver, indirirken nefes al.",
+        query: "Leg Extension nasıl yapılır"
+      },
+      {
+        id: "calf_raises",
+        name: "Calf Raises",
+        muscle: "Baldır (Kalf)",
+        defaultSets: 2,
+        machine: "Oturmalı veya ayakta kalf makinesi, yoksa Leg Press alt kenarı / step tahtası.",
+        form: "Diz pedini diz kapağının 2–3 parmak yukarısına ayarla, basamağa sadece ayak tarağını (parmak köklerini) koy. Topukları aşağı kadar kontrollü esnetip parmak ucunda yüksel ve tepede 1 saniye sık (15–20 tekrar).",
+        breath: "Yukarı yükselirken nefes ver, topukları indirirken nefes al.",
+        query: "Seated Calf Raise nasıl yapılır"
+      },
+      {
+        id: "heel_touch",
+        name: "Alternate Heel Touch",
+        muscle: "Yan Karın (Oblik)",
+        defaultSets: 2,
+        bodyweight: true,
+        machine: "Mat (yer minderi) — ekipmansız vücut ağırlığı.",
+        form: "Sırtüstü yat, dizlerini bük ve ayak tabanlarını yere bas. Omuzlarını yerden hafif kaldır, sırayla sağ elinle sağ topuğuna, sol elinle sol topuğuna dokun (15–20 tekrar).",
+        breath: "Her yana uzanıp dokunurken kısa nefes ver, ortaya dönerken al.",
+        query: "Alternate Heel Touch nasıl yapılır"
+      },
+      {
+        id: "leg_raises",
+        name: "Leg Raises",
+        muscle: "Alt Karın",
+        defaultSets: 2,
+        bodyweight: true,
+        machine: "Mat (yer minderi) — ekipmansız vücut ağırlığı.",
+        form: "Sırtüstü yat, ellerini destek için kalçanın iki yanına koy. Belinde boşluk oluşmamasına dikkat ederek bacakları kontrollü yukarı kaldır, topuklar yere değmeden tekrar kaldır.",
+        breath: "Bacakları kaldırırken nefes ver, yavaşça indirirken nefes al.",
+        query: "Lying Leg Raises nasıl yapılır"
+      },
+      {
+        id: "yarim_mekik",
+        name: "Yarım Mekik (Crunch)",
+        muscle: "Üst Karın",
+        defaultSets: 2,
+        bodyweight: true,
+        machine: "Mat (yer minderi) — ekipmansız vücut ağırlığı.",
+        form: "Dizler bükülü sırtüstü yat. Ellerini göğsünde çaprazla (veya kulak yanında tut, boynundan çekme). Sadece kürek kemiklerini yerden kaldırıp karnını sıkıştır, kontrollü in.",
+        breath: "Yukarı kalkarken nefes ver, inerken nefes al.",
+        query: "Yarım mekik crunch nasıl yapılır"
+      }
+    ]
+  }
+];
+
+const BODYWEIGHT_IDS = new Set(
+  PROGRAM.flatMap(d => d.exercises).filter(e => e.bodyweight).map(e => e.id)
+);
+
+const LS_HISTORY   = "fittx_history_v1";
+const LS_DRAFT     = "fittx_draft_v1";
+const LS_LINKS     = "fittx_links_v1";
+const LS_WATER_LOG = "fittx_water_log_v1";
+const LS_WATER_CFG = "fittx_water_cfg_v1";
+const LS_INSTALL_HIDE = "fittx_install_hide_v1";
+
+function safeGet(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function safeSet(key, val) {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) {}
+}
+
+let currentTab  = 0;
+let historyData = safeGet(LS_HISTORY, []);
+let draftData   = safeGet(LS_DRAFT, {});
+let customLinks = safeGet(LS_LINKS, {});
+let waterLog    = safeGet(LS_WATER_LOG, {});
+let waterCfg    = Object.assign(
+  { enabled: false, intervalMin: 60, startHour: 9, endHour: 23, goalMl: 3000 },
+  safeGet(LS_WATER_CFG, {})
+);
+let installDismissed = !!safeGet(LS_INSTALL_HIDE, false);
+const openGuides = new Set();
+
+const isAndroidApk = !!window.AndroidWater;
+const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+let timerInterval = null;
+let timerEndTs = 0;
+
+document.getElementById("todayDate").textContent = new Date().toLocaleDateString("tr-TR", {
+  day: "numeric", month: "short", weekday: "short"
+});
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function formatSetText(s, isBodyweight) {
+  const noWeight = !s.kg || s.kg === "0" || parseFloat(s.kg) === 0;
+  if (isBodyweight && noWeight) {
+    return `${s.reps} tkr`;
+  }
+  return `${s.kg}kg×${s.reps}`;
+}
+
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.style.display = "block";
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = "none"; }, 2200);
+}
+
+function beep() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.value = 0.2;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    setTimeout(() => { osc.stop(); ctx.close(); }, 350);
+  } catch (e) {}
+}
+
+function updateTimerUI(sec) {
+  const safeSec = Math.max(0, sec);
+  const m = String(Math.floor(safeSec / 60)).padStart(2, "0");
+  const s = String(safeSec % 60).padStart(2, "0");
+  document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+}
+
+function tickTimer() {
+  if (!timerEndTs) return;
+  const left = Math.ceil((timerEndTs - Date.now()) / 1000);
+  if (left <= 0) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerEndTs = 0;
+    updateTimerUI(0);
+    beep();
+    showToast("Dinlenme bitti, sıradaki sete gir!");
+  } else {
+    updateTimerUI(left);
+  }
+}
+
+function startTimer(sec) {
+  clearInterval(timerInterval);
+  timerEndTs = Date.now() + sec * 1000;
+  updateTimerUI(sec);
+  timerInterval = setInterval(tickTimer, 500);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerEndTs = 0;
+  updateTimerUI(0);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && timerEndTs) tickTimer();
+});
+
+function dismissInstallBanner() {
+  installDismissed = true;
+  safeSet(LS_INSTALL_HIDE, true);
+  render();
+}
+
+function getInstallBannerHtml() {
+  if (isAndroidApk || isStandalone || installDismissed) return "";
+  const tip = isIos
+    ? "Safari alt ortadaki <b>Paylaş (⬆)</b> simgesine dokun, ardından <b>Ana Ekrana Ekle</b> seçeneğine bas."
+    : "Tarayıcı sağ üstteki <b>⋮</b> menüsüne dokun, ardından <b>Ana ekrana ekle / Uygulamayı yükle</b> seçeneğine bas.";
+  return `
+    <div class="install-banner">
+      <div>
+        <strong>📲 Uygulama Gibi Ana Ekrana Ekle</strong>
+        <div>${tip}</div>
+      </div>
+      <button class="install-close" onclick="dismissInstallBanner()" aria-label="Kapat">✕</button>
+    </div>
+  `;
+}
+
+function getDraft(ex) {
+  if (!draftData[ex.id]) {
+    draftData[ex.id] = {
+      sets: Array.from({ length: ex.defaultSets }, () => ({ kg: "", reps: "", done: false })),
+      note: ""
+    };
+  }
+  return draftData[ex.id];
+}
+
+function saveDraft() {
+  safeSet(LS_DRAFT, draftData);
+}
+
+function getStats(exId) {
+  let last = null;
+  let pr = 0;
+  for (let i = 0; i < historyData.length; i++) {
+    const entry = historyData[i];
+    const found = entry.items.find(x => x.id === exId);
+    if (found) {
+      if (!last) last = found;
+      found.sets.forEach(s => {
+        const k = parseFloat(s.kg) || 0;
+        if (k > pr) pr = k;
+      });
+    }
+  }
+  return { last, pr };
+}
+
+function getVideoUrl(ex) {
+  if (customLinks[ex.id]) {
+    const u = customLinks[ex.id];
+    return /^https?:\/\//i.test(u) ? u : "https://" + u;
+  }
+  return "https://www.youtube.com/results?search_query=" + encodeURIComponent(ex.query);
+}
+
+function editCustomLink(exId, exName) {
+  const current = customLinks[exId] || "";
+  const val = prompt(`${exName} için özel YouTube linki yapıştır (varsayılana dönmek için boş bırak):`, current);
+  if (val === null) return;
+  const trimmed = val.trim();
+  if (trimmed === "") {
+    delete customLinks[exId];
+    showToast("Varsayılan YouTube aramasına dönüldü");
+  } else {
+    customLinks[exId] = trimmed;
+    showToast("Özel video linki kaydedildi");
+  }
+  safeSet(LS_LINKS, customLinks);
+  render();
+}
+
+function updateSet(exId, idx, field, val) {
+  draftData[exId].sets[idx][field] = val;
+  saveDraft();
+}
+
+function toggleSetDone(exId, idx) {
+  const s = draftData[exId].sets[idx];
+  s.done = !s.done;
+  saveDraft();
+  if (s.done) startTimer(90);
+  render();
+}
+
+function addSet(exId) {
+  draftData[exId].sets.push({ kg: "", reps: "", done: false });
+  saveDraft();
+  render();
+}
+
+function removeSet(exId) {
+  if (draftData[exId].sets.length > 1) {
+    draftData[exId].sets.pop();
+    saveDraft();
+    render();
+  }
+}
+
+function updateNote(exId, val) {
+  draftData[exId].note = val;
+  saveDraft();
+}
+
+function toggleGuide(exId) {
+  const box = document.getElementById("guide-" + exId);
+  if (!box) return;
+  if (openGuides.has(exId)) {
+    openGuides.delete(exId);
+    box.classList.remove("open");
+  } else {
+    openGuides.add(exId);
+    box.classList.add("open");
+  }
+}
+
+function saveWorkout(dayIndex) {
+  const day = PROGRAM[dayIndex];
+  const items = [];
+  day.exercises.forEach(ex => {
+    const d = getDraft(ex);
+    const validSets = d.sets.filter(s => (s.kg !== "" && s.kg !== null) || (s.reps !== "" && s.reps !== null));
+    if (validSets.length > 0) {
+      items.push({
+        id: ex.id,
+        name: ex.name,
+        bodyweight: !!ex.bodyweight,
+        note: d.note || "",
+        sets: validSets.map(s => ({ kg: s.kg || "0", reps: s.reps || "0" }))
+      });
+    }
+  });
+
+  if (items.length === 0) {
+    showToast("Önce en az bir hareketin kilo veya tekrarını gir!");
+    return;
+  }
+
+  historyData.unshift({
+    ts: Date.now(),
+    dateStr: new Date().toLocaleDateString("tr-TR", {
+      day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
+    }),
+    dayId: day.id,
+    dayTitle: day.title,
+    items
+  });
+  safeSet(LS_HISTORY, historyData);
+
+  day.exercises.forEach(ex => {
+    draftData[ex.id].sets.forEach(s => { s.done = false; });
+  });
+  saveDraft();
+  showToast("Antrenman kaydedildi! Eline sağlık 💪");
+  render();
+}
+
+function deleteHistory(ts) {
+  if (!confirm("Bu antrenman kaydını silmek istiyor musun?")) return;
+  historyData = historyData.filter(x => x.ts !== ts);
+  safeSet(LS_HISTORY, historyData);
+  render();
+}
+
+function exportBackup() {
+  const payload = JSON.stringify({ historyData, customLinks, waterCfg });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(payload)
+      .then(() => showToast("Yedek panoya kopyalandı!"))
+      .catch(() => prompt("Aşağıdaki yedek metnini kopyala:", payload));
+  } else {
+    prompt("Aşağıdaki yedek metnini kopyala:", payload);
+  }
+}
+
+function importBackup() {
+  const raw = prompt("Daha önce kopyaladığın yedek metnini buraya yapıştır:");
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed.historyData)) {
+      historyData = parsed.historyData;
+      safeSet(LS_HISTORY, historyData);
+    }
+    if (parsed.customLinks) {
+      customLinks = parsed.customLinks;
+      safeSet(LS_LINKS, customLinks);
+    }
+    if (parsed.waterCfg) {
+      waterCfg = Object.assign(waterCfg, parsed.waterCfg);
+      safeSet(LS_WATER_CFG, waterCfg);
+    }
+    showToast("Yedek başarıyla geri yüklendi!");
+    render();
+  } catch (e) {
+    showToast("Geçersiz yedek formatı!");
+  }
+}
+
+/* --- SU TAKİBİ --- */
+function addWater(ml) {
+  const key = getTodayKey();
+  const curr = waterLog[key] || 0;
+  waterLog[key] = Math.max(0, curr + ml);
+  safeSet(LS_WATER_LOG, waterLog);
+  render();
+}
+
+function toggleWaterReminder() {
+  waterCfg.enabled = !waterCfg.enabled;
+  applyWaterConfig(true);
+  render();
+}
+
+function updateWaterField(field, val) {
+  waterCfg[field] = parseInt(val, 10);
+  safeSet(LS_WATER_CFG, waterCfg);
+}
+
+function applyWaterConfig(silentToast) {
+  safeSet(LS_WATER_CFG, waterCfg);
+  if (window.AndroidWater) {
+    window.AndroidWater.saveWaterConfig(
+      !!waterCfg.enabled,
+      parseInt(waterCfg.intervalMin, 10),
+      parseInt(waterCfg.startHour, 10),
+      parseInt(waterCfg.endHour, 10)
+    );
+  }
+  if (!silentToast) {
+    showToast(waterCfg.enabled ? "Sessiz su hatırlatması aktif 💧" : "Su hatırlatması kapatıldı");
+  }
+}
+
+function testWaterNotification() {
+  if (window.AndroidWater) {
+    window.AndroidWater.sendTestNotification();
+  }
+}
+
+function openWaterChannelSettings() {
+  if (window.AndroidWater) {
+    window.AndroidWater.openNotificationSettings();
+  }
+}
+
+function switchTab(idx) {
+  currentTab = idx;
+  for (let i = 0; i < 5; i++) {
+    document.getElementById("nav-" + i).classList.toggle("active", i === idx);
+  }
+  window.scrollTo(0, 0);
+  render();
+}
+
+function render() {
+  const app = document.getElementById("app");
+  if (currentTab === 3) {
+    renderWater(app);
+    return;
+  }
+  if (currentTab === 4) {
+    renderHistory(app);
+    return;
+  }
+
+  const day = PROGRAM[currentTab];
+  let html = getInstallBannerHtml() + `
+    <div class="day-header">
+      <div>
+        <h1 class="day-title">${day.title}</h1>
+        <div class="day-sub">${day.sub}</div>
+      </div>
+    </div>
+  `;
+
+  day.exercises.forEach(ex => {
+    const d = getDraft(ex);
+    const stats = getStats(ex.id);
+    const lastText = stats.last
+      ? stats.last.sets.map(s => formatSetText(s, !!ex.bodyweight)).join(" · ")
+      : "Henüz kayıt yok";
+
+    html += `
+      <div class="ex-card">
+        <div class="ex-top">
+          <div>
+            <h2 class="ex-name">${ex.name}</h2>
+            <div class="ex-muscle">${ex.muscle}</div>
+          </div>
+          <span class="badge">${d.sets.length} Set</span>
+        </div>
+
+        <div class="badges">
+          <span class="badge last">Son: ${lastText}</span>
+          ${stats.pr > 0 ? `<span class="badge pr">Rekor: ${stats.pr} kg</span>` : ""}
+        </div>
+
+        <button class="guide-toggle" onclick="toggleGuide('${ex.id}')">
+          <span>📖 Makine, Duruş, Nefes & Video</span>
+          <span>▾</span>
+        </button>
+        <div class="guide-box ${openGuides.has(ex.id) ? "open" : ""}" id="guide-${ex.id}">
+          <div class="guide-item"><strong>Makine / Ekipman:</strong> ${ex.machine}</div>
+          <div class="guide-item"><strong>Nasıl Yapılır:</strong> ${ex.form}</div>
+          <div class="guide-item"><strong>Nefes:</strong> ${ex.breath}</div>
+          <div class="video-row">
+            <a class="btn-yt" href="${escapeHtml(getVideoUrl(ex))}" target="_blank" rel="noopener noreferrer">▶ YouTube'da İzle</a>
+            <button class="btn-link-edit" onclick="editCustomLink('${ex.id}', '${ex.name}')">
+              ${customLinks[ex.id] ? "🔗 Linki Değiştir" : "+ Özel Link"}
+            </button>
+          </div>
+        </div>
+
+        <div class="sets-wrap">
+          <div class="set-head">
+            <div>Set</div>
+            <div>${ex.bodyweight ? "Ek Kilo (kg)" : "Kilo (kg)"}</div>
+            <div>Tekrar</div>
+            <div style="text-align:center;">Bitti</div>
+          </div>
+          ${d.sets.map((s, idx) => {
+            const prevSet = stats.last && stats.last.sets[idx] ? stats.last.sets[idx] : null;
+            const kgPh = prevSet ? prevSet.kg : (ex.bodyweight ? "0" : "kg");
+            const repPh = prevSet ? prevSet.reps : "10";
+            return `
+              <div class="set-row">
+                <div class="set-num">${idx + 1}</div>
+                <input class="set-input" type="number" inputmode="decimal" step="0.5" placeholder="${escapeHtml(kgPh)}" value="${escapeHtml(s.kg)}" oninput="updateSet('${ex.id}', ${idx}, 'kg', this.value)">
+                <input class="set-input" type="number" inputmode="numeric" placeholder="${escapeHtml(repPh)}" value="${escapeHtml(s.reps)}" oninput="updateSet('${ex.id}', ${idx}, 'reps', this.value)">
+                <button class="check-btn ${s.done ? "done" : ""}" onclick="toggleSetDone('${ex.id}', ${idx})">✓</button>
+              </div>
+            `;
+          }).join("")}
+          <div class="set-actions">
+            <button class="mini-btn" onclick="addSet('${ex.id}')">+ Set Ekle</button>
+            <button class="mini-btn" onclick="removeSet('${ex.id}')">- Set Sil</button>
+          </div>
+          <input class="note-input" type="text" placeholder="Not (örn: Koltuk ayarı 4, tutuş dar...)" value="${escapeHtml(d.note)}" oninput="updateNote('${ex.id}', this.value)">
+        </div>
+      </div>
+    `;
+  });
+
+  html += `<button class="save-workout-btn" onclick="saveWorkout(${currentTab})">✅ Antrenmanı Kaydet</button>`;
+  app.innerHTML = html;
+}
+
+function renderWater(app) {
+  const todayMl = waterLog[getTodayKey()] || 0;
+  const pct = Math.min(100, Math.round((todayMl / waterCfg.goalMl) * 100));
+
+  const hourOptions = (selected) => {
+    let out = "";
+    for (let h = 0; h <= 23; h++) {
+      const label = String(h).padStart(2, "0") + ":00";
+      out += `<option value="${h}" ${h === selected ? "selected" : ""}>${label}</option>`;
+    }
+    return out;
+  };
+
+  let reminderCardHtml = "";
+  if (isAndroidApk) {
+    reminderCardHtml = `
+      <div class="ex-card">
+        <div class="water-row">
+          <div>
+            <strong>Sessiz Bildirim</strong>
+            <div style="font-size:11px;color:var(--muted);">Üst pencereden sessiz düşer</div>
+          </div>
+          <button class="toggle-pill ${waterCfg.enabled ? "on" : ""}" onclick="toggleWaterReminder()">
+            ${waterCfg.enabled ? "AÇIK" : "KAPALI"}
+          </button>
+        </div>
+
+        <div class="water-row">
+          <span>Hatırlatma Sıklığı</span>
+          <select class="water-select" onchange="updateWaterField('intervalMin', this.value)">
+            ${[30, 45, 60, 90, 120].map(m => `<option value="${m}" ${waterCfg.intervalMin === m ? "selected" : ""}>Her ${m} dk</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="water-row">
+          <span>Aktif Başlangıç Saati</span>
+          <select class="water-select" onchange="updateWaterField('startHour', this.value)">
+            ${hourOptions(waterCfg.startHour)}
+          </select>
+        </div>
+
+        <div class="water-row">
+          <span>Aktif Bitiş Saati</span>
+          <select class="water-select" onchange="updateWaterField('endHour', this.value)">
+            ${hourOptions(waterCfg.endHour)}
+          </select>
+        </div>
+
+        <button class="water-save-btn" onclick="applyWaterConfig(false)">💾 Hatırlatıcıyı Kaydet</button>
+
+        <div class="backup-box" style="margin-top:10px;margin-bottom:0;">
+          <button class="backup-btn" onclick="testWaterNotification()">🔔 Test Bildirimi</button>
+          <button class="backup-btn" onclick="openWaterChannelSettings()">⚙️ Kanal Ayarı</button>
+        </div>
+      </div>
+    `;
+  } else {
+    reminderCardHtml = `
+      <div class="ex-card">
+        <div class="water-row" style="border-bottom:none;padding:4px 0;">
+          <span>Günlük Su Hedefi</span>
+          <select class="water-select" onchange="updateWaterField('goalMl', this.value); render();">
+            ${[2000, 2500, 3000, 3500, 4000].map(g => `<option value="${g}" ${waterCfg.goalMl === g ? "selected" : ""}>${(g / 1000).toFixed(1)} Litre</option>`).join("")}
+          </select>
+        </div>
+        <div class="info-note">
+          İçtiğin suyu gün boyu buradan tek dokunuşla kaydedebilirsin; gece yarısı otomatik sıfırlanır. Arka planda sessiz hatırlatma bildirimi Android APK sürümünde aktiftir.
+        </div>
+      </div>
+    `;
+  }
+
+  app.innerHTML = getInstallBannerHtml() + `
+    <div class="day-header">
+      <div>
+        <h1 class="day-title">Günlük Su Takibi</h1>
+        <div class="day-sub">Günlük hedefine göre su tüketimini takip et</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <div class="water-big">
+        <div class="water-ml">${(todayMl / 1000).toFixed(2)} L</div>
+        <div class="water-goal">${todayMl} ml / Hedef: ${waterCfg.goalMl} ml (%${pct})</div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="water-btn-grid">
+        <button class="water-add-btn" onclick="addWater(200)">+200 ml<br><span style="font-size:11px;font-weight:500;">Bardak</span></button>
+        <button class="water-add-btn" onclick="addWater(300)">+300 ml<br><span style="font-size:11px;font-weight:500;">Büyük</span></button>
+        <button class="water-add-btn" onclick="addWater(500)">+500 ml<br><span style="font-size:11px;font-weight:500;">Şişe</span></button>
+      </div>
+      <div class="set-actions" style="margin-top:10px;">
+        <button class="mini-btn" onclick="addWater(-200)">-200 ml Geri Al</button>
+        <button class="mini-btn" onclick="addWater(-99999)">Bugünü Sıfırla</button>
+      </div>
+      ${isAndroidApk ? `
+        <div class="water-row" style="margin-top:10px;border-top:1px solid var(--border);border-bottom:none;padding-bottom:0;">
+          <span>Günlük Hedef</span>
+          <select class="water-select" onchange="updateWaterField('goalMl', this.value); render();">
+            ${[2000, 2500, 3000, 3500, 4000].map(g => `<option value="${g}" ${waterCfg.goalMl === g ? "selected" : ""}>${(g / 1000).toFixed(1)} Litre</option>`).join("")}
+          </select>
+        </div>
+      ` : ""}
+    </div>
+
+    ${reminderCardHtml}
+  `;
+}
+
+function renderHistory(app) {
+  let html = getInstallBannerHtml() + `
+    <div class="day-header">
+      <div>
+        <h1 class="day-title">Antrenman Geçmişi</h1>
+        <div class="day-sub">Toplam ${historyData.length} kayıtlı antrenman</div>
+      </div>
+    </div>
+    <div class="backup-box">
+      <button class="backup-btn" onclick="exportBackup()">📋 Yedeği Kopyala</button>
+      <button class="backup-btn" onclick="importBackup()">📥 Yedek Yükle</button>
+    </div>
+  `;
+
+  if (historyData.length === 0) {
+    html += `<div class="history-card" style="color:var(--muted);text-align:center;padding:24px;">Henüz kayıtlı antrenman yok. Bir günü bitirip "Antrenmanı Kaydet" dediğinde burada listelenecek.</div>`;
+  } else {
+    historyData.forEach(entry => {
+      html += `
+        <div class="history-card">
+          <div class="history-top">
+            <div>
+              <div style="font-weight:800;font-size:15px;">${escapeHtml(entry.dayTitle)}</div>
+              <div style="font-size:11px;color:var(--muted);">${escapeHtml(entry.dateStr)}</div>
+            </div>
+            <button class="del-btn" onclick="deleteHistory(${entry.ts})">Sil</button>
+          </div>
+          ${entry.items.map(it => {
+            const isBw = it.bodyweight || BODYWEIGHT_IDS.has(it.id);
+            return `
+              <div class="history-line">
+                <strong>${escapeHtml(it.name)}:</strong>
+                <span>${it.sets.map(s => escapeHtml(formatSetText(s, isBw))).join(" · ")}</span>
+                ${it.note ? `<div style="font-size:11px;color:#93C5FD;">Not: ${escapeHtml(it.note)}</div>` : ""}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    });
+  }
+  app.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
